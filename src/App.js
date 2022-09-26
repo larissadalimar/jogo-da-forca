@@ -37,7 +37,7 @@ function ButtonLetter(props){
 
     }
     
-    return(<button class={(!isClicked && props.enabled)? "enabled" : "disabled"} onClick={() => {if(!isClicked && props.enabled) selectLetra(props.letra.toLowerCase())}}>{props.letra}</button>)
+    return(<button class={(!isClicked && props.enabled)? "enabled" : "disabled"} data-identifier="letter" onClick={() => {if(!isClicked && props.enabled) selectLetra(props.letra.toLowerCase())}}>{props.letra}</button>)
 }
 
 export default function App(){
@@ -81,10 +81,10 @@ export default function App(){
     return(
         <div>
             <div class="forca">
-                <img src={forca} alt=""/>
+                <img data-identifier="game-image" src={forca} alt=""/>
                 <div>
-                    <button class="escolher-palavra" onClick={comecaJogo}>Escolher Palavra</button>
-                    <div class={corPalavra}>
+                    <button class="escolher-palavra" data-identifier="choose-word" onClick={comecaJogo}>Escolher Palavra</button>
+                    <div class={corPalavra} data-identifier="word">
                         {caracteresPalavra.map((caractere) => <text>{caractere} </text>)}
                     </div>
                 </div>
@@ -98,8 +98,8 @@ export default function App(){
             </div>
             <div class="responder">
                 <text>Já sei a palavra!</text>
-                {enabled? <input value={chute} onChange={(event) => setChute(event.target.value)}></input> : <input disabled></input>}
-                <button onClick={() => {if(enabled) ChutaPalavra()}}>Chutar</button>
+                {enabled? <input data-identifier="type-guess" value={chute} onChange={(event) => setChute(event.target.value)}></input> : <input disabled></input>}
+                <button data-identifier="guess-button" onClick={() => {if(enabled) ChutaPalavra()}}>Chutar</button>
             </div>
         </div>
     )
