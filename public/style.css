@@ -1,7 +1,6 @@
 img{
     width: 400px;
     height: 500px;
-    margin: 0 150px 0 0;
 }
 
 .root {
@@ -17,6 +16,11 @@ img{
     align-items: flex-start;
 }
 
+.forca > div{
+    display: flex;
+    flex-direction: column;
+}
+
 .escolher-palavra{
     background-color: green;
     font-weight: bold;
@@ -26,6 +30,7 @@ img{
     width: 150px;
     height: 40px;
     margin-top: 35px;
+    margin: 35px 0 350px 150px;
 }
 
 .teclado{
@@ -43,6 +48,24 @@ img{
     margin: 5px 5px 0 0;
     width: 35px;
     height: 35px;
+}
+
+.escondido{
+    display: none;
+}
+
+.palavra-jogada{
+    font-weight: bold;
+    font-size: 30px;
+    margin-left: 30px;
+}
+
+.vermelho{
+    color: red;
+}
+
+.verde{
+    color: green;
 }
 
 .disabled{
