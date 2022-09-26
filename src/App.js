@@ -1,6 +1,44 @@
 import { useState } from 'react'
 import palavras from './palavras'
 
+function ButtonLetter(props){
+    const [isClicked, setIsClicked] = useState(false)
+
+    function selectLetra(letra){
+
+        setIsClicked(true)
+        let novoArray = [...props.caracteresPalavra]
+
+        if(props.palavraAdvinhada.includes(letra)){
+            let index = props.palavraAdvinhada.indexOf(letra) 
+            novoArray[index] = props.palavraEscolhida[index]
+            while(props.palavraAdvinhada.indexOf(letra, index+1) !== -1){
+                index = props.palavraAdvinhada.indexOf(letra, index+1)
+                novoArray[index] = props.palavraEscolhida[index]
+            }
+            props.setCaracteresPalavra(novoArray)
+        }else{
+            props.setErros(props.erros+1)
+            props.setForca(`./assets/forca${props.erros+1}.png`)
+            if((props.erros + 1) === 6){
+               props.setEnabled(false)
+               props.setCaracteresPalavra(props.palavraEscolhida)
+               props.setCorPalavra("palavra-jogada vermelho")
+               setIsClicked(false)
+            }
+        }
+
+        if(JSON.stringify(novoArray) === JSON.stringify(props.palavraEscolhida)){
+            props.setEnabled(false)
+            props.setCorPalavra("palavra-jogada verde")
+            props.setCaracteresPalavra(props.palavraEscolhida)
+            setIsClicked(false)
+        }
+
+    }
+    
+    return(<button class={(!isClicked && props.enabled)? "enabled" : "disabled"} onClick={() => {if(!isClicked && props.enabled) selectLetra(props.letra.toLowerCase())}}>{props.letra}</button>)
+}
 
 export default function App(){
     const letras = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -11,6 +49,7 @@ export default function App(){
     const [forca, setForca] = useState("./assets/forca0.png")
     const [palavraAdvinhada, setPalavraAdvinhada] = useState("")
     const [corPalavra, setCorPalavra] = useState("palavra-jogada")
+    const [chute, setChute] = useState("")
     //const imagensDaForca = ["forca0.png", "forca1.png", "forca2.png", "forca3.png", "forca4.png", "forca5.png", "forca6.png"]
 
     function comecaJogo(){
@@ -21,47 +60,22 @@ export default function App(){
         setCorPalavra("palavra-jogada")
         setForca("./assets/forca0.png")
         setErros(0)
+        setChute("")
         setCaracteresPalavra(Array(palavra.length).fill('_'))
         console.log(palavra)
     }
 
-    function ButtonLetter(props){
-        const [isClicked, setIsClicked] = useState(false)
-    
-        function selectLetra(letra){
-            let novoArray = [...caracteresPalavra]
-            console.log(palavraAdvinhada)
-
-            if(palavraAdvinhada.includes(letra)){
-                let index = palavraAdvinhada.indexOf(letra) 
-                novoArray[index] = palavraEscolhida[index]
-                console.log(novoArray[index])
-                while(palavraAdvinhada.indexOf(letra, index+1) !== -1){
-                    index = palavraAdvinhada.indexOf(letra, index+1)
-                    novoArray[index] = palavraEscolhida[index]
-                    console.log(novoArray[index])
-                }
-                setCaracteresPalavra(novoArray)
-            }else{
-                setErros(erros+1)
-                setForca(`./assets/forca${erros+1}.png`)
-                if((erros + 1) === 6){
-                   setEnabled(false)
-                   setCaracteresPalavra(palavraEscolhida)
-                   setCorPalavra("palavra-jogada vermelho")
-                }
-            }
-
-            if(JSON.stringify(novoArray) === JSON.stringify(palavraEscolhida)){
-                setCorPalavra("palavra-jogada verde")
-            }
-
-            setIsClicked(true)
-            console.log("chegando ao final")
+    function ChutaPalavra(){
+        let comparaChute = chute.toLowerCase().split('')
+        if(JSON.stringify(comparaChute) === JSON.stringify(palavraEscolhida)){
+            setCaracteresPalavra(palavraEscolhida)
+            setCorPalavra("palavra-jogada verde")
+        }else{
+            setCaracteresPalavra(palavraEscolhida)
+            setCorPalavra("palavra-jogada vermelho")
+            setForca('./assets/forca6.png')
         }
-    
-        
-        return(<button class={!isClicked && enabled? "enabled" : "disabled"} onClick={() => {if(!isClicked && enabled) selectLetra(props.letra.toLowerCase())}}>{props.letra}</button>)
+        setEnabled(false)
     }
 
     return(
@@ -76,12 +90,16 @@ export default function App(){
                 </div>
             </div>
             <div class="teclado">
-                {letras.map((letra) => <ButtonLetter letra={letra.toUpperCase()}/>)}
+                {letras.map((letra) => <ButtonLetter letra={letra.toUpperCase()} caracteresPalavra={caracteresPalavra} palavraAdvinhada = {palavraAdvinhada}
+                  palavraEscolhida={palavraEscolhida} setCaracteresPalavra={setCaracteresPalavra}
+                  setErros={setErros} erros={erros} setForca={setForca}
+                  setEnabled={setEnabled}
+                  setCorPalavra={setCorPalavra} enabled={enabled}/>)}
             </div>
             <div class="responder">
                 <text>Já sei a palavra!</text>
-                {enabled? <input></input> : <input disabled></input>}
-                <button>Chutar</button>
+                {enabled? <input value={chute} onChange={(event) => setChute(event.target.value)}></input> : <input disabled></input>}
+                <button onClick={() => {if(enabled) ChutaPalavra()}}>Chutar</button>
             </div>
         </div>
     )
